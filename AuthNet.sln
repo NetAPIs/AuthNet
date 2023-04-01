@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthNet", "AuthNet\AuthNet.csproj", "{98729342-E6E8-45C6-8C0A-A6FAADE8873E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{98729342-E6E8-45C6-8C0A-A6FAADE8873E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98729342-E6E8-45C6-8C0A-A6FAADE8873E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98729342-E6E8-45C6-8C0A-A6FAADE8873E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98729342-E6E8-45C6-8C0A-A6FAADE8873E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D6DD02B6-9A41-4931-90D4-35B11760E2E1}
+	EndGlobalSection
+EndGlobal
