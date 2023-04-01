@@ -4,7 +4,7 @@
 
 <ul>
   <li>EntityFrameworkCore</li>
-  <li>SqlServer</li>
+  <li>EntityFrameworkCore.SqlServer</li>
   <li>EntityFrameworkCore.Tools</li>
   <li>EntityFrameworkCore.Design</li>
 </ul>
