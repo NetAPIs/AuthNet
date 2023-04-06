@@ -1,23 +1,26 @@
 # AuthNet
 
-<h3>This project contains an app which works on Register/Login method. It uses several dependencies like: </h3>
+AuthNet is a .NET Core API project that provides user authentication and authorization functionality. It uses JSON Web Tokens (JWT) to securely authenticate users and protect sensitive routes.
 
-<ul>
-  <li>EntityFrameworkCore</li>
-  <li>EntityFrameworkCore.SqlServer</li>
-  <li>EntityFrameworkCore.Tools</li>
-  <li>EntityFrameworkCore.Design</li>
-</ul>
+# Installation
 
-<h3>And for JWT operations it uses: </h3>
+To install and run AuthNet:
 
-<ul>
-  <li>IdentityModels.Token</li>
-  <li>IdentityModel.Tokens.Jwt</li>
-  <li>Swashbuckle.AspNetCore</li>
-  <li>BCrypt.Net-Next</li>
-</ul>
+Clone the repository to your local machine using the command git clone https://github.com/Argones/AuthNet.git. <br>
+Navigate to the project root directory and run the command dotnet run to start the server. <br>
+Open a web browser and go to https://localhost:5001/swagger/index.html to view the Swagger UI and test the API endpoints. <br>
 
-<h3>And here is the picture </h3>
+# Dependencies
 
-![main](https://user-images.githubusercontent.com/110688067/229288940-8cbfe6ef-677e-40ca-9bf1-09fcaa6bf2f3.png)
+AuthNet uses the following dependencies:
+
+.NET Core 7.0 <br>
+Entity Framework Core <br>
+Microsoft.AspNetCore.Authentication.JwtBearer <br>
+Microsoft.IdentityModel.Tokens <br>
+Swashbuckle.AspNetCore <br>
+
+# License
+AuthNet is released under the MIT License. See the LICENSE file for more details.
+
+Feel free to modify and use AuthNet for your own purposes. If you have any questions or issues, please open a new issue on the GitHub repository.
