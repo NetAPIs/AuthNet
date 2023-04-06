@@ -1,5 +1,6 @@
 ﻿using AuthNet.Data;
 using AuthNet.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,14 @@ namespace AuthNet.Controllers
         {
             _configuration = configuration;
             _context = context;
+        }
+
+        [HttpGet, Authorize]
+        public ActionResult<string> GetMyName()
+        {
+            var userName = User?.Identity?.Name;
+            var role = User?.FindFirstValue(ClaimTypes.Role);
+            return Ok(new { userName, role });
         }
 
         [HttpPost("register")]
@@ -50,7 +59,7 @@ namespace AuthNet.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<User>> Login(UserDto request)
+        public ActionResult<User> Login(UserDto request)
         {
             var user = _context.Users.SingleOrDefault(u => u.UserName == request.UserName);
 
@@ -75,10 +84,12 @@ namespace AuthNet.Controllers
 
         private string CreateToken(User user)
         {
-            Console.WriteLine($"User object: {user}"); // Add this line to see the value of user
+            Console.WriteLine($"User object: {user}");
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Role, "Admin"),
+                new Claim(ClaimTypes.Role, "User")
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value!));
