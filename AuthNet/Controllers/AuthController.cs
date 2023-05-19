@@ -35,52 +35,67 @@ namespace AuthNet.Controllers
         }
 
         [HttpPost("register")]
-        public ActionResult<User> Register (UserDto request)
+        public ActionResult<User> Register(UserDto request)
         {
-            string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-
-            var user = new User
+            try
             {
-                UserName = request.UserName,
-                PasswordHash = passwordHash
-            };
+                string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
-            var existingUser = _context.Users.FirstOrDefault(u => u.UserName == user.UserName);
+                var user = new User
+                {
+                    UserName = request.UserName,
+                    PasswordHash = passwordHash
+                };
 
-            if (existingUser != null)
-            {
-                return BadRequest("Username already exists!");
+                var existingUser = _context.Users.FirstOrDefault(u => u.UserName == user.UserName);
+
+                if (existingUser != null)
+                {
+                    return BadRequest("Username already exists!");
+                }
+
+                _context.Users.Add(user);
+                _context.SaveChanges();
+
+                return Ok(user);
             }
-
-            _context.Users.Add(user);
-            _context.SaveChanges();
-
-            return Ok(user);
+            catch (Exception)
+            {                
+                return StatusCode(500, "An error occurred during registration");
+            }
         }
+
 
         [HttpPost("login")]
         public ActionResult<User> Login(UserDto request)
         {
-            var user = _context.Users.SingleOrDefault(u => u.UserName == request.UserName);
-
-            if (user == null)
+            try
             {
-                return BadRequest("User does not exist!");
+                var user = _context.Users.SingleOrDefault(u => u.UserName == request.UserName);
+
+                if (user == null)
+                {
+                    return BadRequest("User does not exist!");
+                }
+
+                var isUsernameCorrect = user.UserName == request.UserName;
+                var isPasswordCorrect = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
+
+                if (!isUsernameCorrect || !isPasswordCorrect)
+                {
+                    return BadRequest("Invalid username or password!");
+                }
+
+                string token = CreateToken(user);
+
+                return Ok(token);
             }
-
-            var isUsernameCorrect = user.UserName == request.UserName;
-            var isPasswordCorrect = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
-
-            if (!isUsernameCorrect || !isPasswordCorrect)
-            {
-                return BadRequest("Invalid username or password!");
+            catch (Exception)
+            {                
+                return StatusCode(500, "An error occurred during login.");
             }
-
-            string token = CreateToken(user);
-
-            return Ok(token);
-
         }
+
 
         private string CreateToken(User user)
         {
