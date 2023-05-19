@@ -1,5 +1,6 @@
 ﻿using AuthNet.Data;
 using AuthNet.Models;
+using AuthNet.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +20,15 @@ namespace AuthNet.Controllers
 
         private readonly IConfiguration _configuration;
         private readonly DataContext _context;
+        private readonly IAuthService _service;
 
-        public AuthController(IConfiguration configuration, DataContext context) 
+        public IAuthService Service { get; }
+
+        public AuthController(IConfiguration configuration, DataContext context, IAuthService service) 
         {
             _configuration = configuration;
             _context = context;
+            _service = service;
         }
 
         [HttpGet, Authorize]
@@ -35,91 +40,22 @@ namespace AuthNet.Controllers
         }
 
         [HttpPost("register")]
-        public ActionResult<User> Register(UserDto request)
+        public async Task<ActionResult<User>> Register(UserDto request)
         {
-            try
-            {
-                string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-
-                var user = new User
-                {
-                    UserName = request.UserName,
-                    PasswordHash = passwordHash
-                };
-
-                var existingUser = _context.Users.FirstOrDefault(u => u.UserName == user.UserName);
-
-                if (existingUser != null)
-                {
-                    return BadRequest("Username already exists!");
-                }
-
-                _context.Users.Add(user);
-                _context.SaveChanges();
-
-                return Ok(user);
-            }
-            catch (Exception)
-            {                
-                return StatusCode(500, "An error occurred during registration");
-            }
+            return await _service.Register(request);
         }
 
 
         [HttpPost("login")]
-        public ActionResult<User> Login(UserDto request)
+        public async Task<ActionResult<User>> Login(UserDto request)
         {
-            try
-            {
-                var user = _context.Users.SingleOrDefault(u => u.UserName == request.UserName);
-
-                if (user == null)
-                {
-                    return BadRequest("User does not exist!");
-                }
-
-                var isUsernameCorrect = user.UserName == request.UserName;
-                var isPasswordCorrect = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
-
-                if (!isUsernameCorrect || !isPasswordCorrect)
-                {
-                    return BadRequest("Invalid username or password!");
-                }
-
-                string token = CreateToken(user);
-
-                return Ok(token);
-            }
-            catch (Exception)
-            {                
-                return StatusCode(500, "An error occurred during login.");
-            }
+            return await _service.Login(request);
         }
 
 
         private string CreateToken(User user)
         {
-            Console.WriteLine($"User object: {user}");
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Role, "Admin"),
-                new Claim(ClaimTypes.Role, "User")
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value!));
-
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var token = new JwtSecurityToken(
-                    claims: claims,
-                    expires: DateTime.Now.AddDays(1),
-                    signingCredentials: cred
-                );
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return jwt;
+            return _service.CreateToken(user);
         }
     }
 }

@@ -1,4 +1,5 @@
 using AuthNet.Data;
+using AuthNet.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +44,7 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
                 builder.Configuration.GetSection("AppSettings:Token").Value!))
     };
 });
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
